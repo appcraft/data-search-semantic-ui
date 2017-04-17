@@ -1,6 +1,6 @@
 {
   "name": "data-search-semantic-ui",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "data-search-semantic-ui React component",
   "main": "lib/index.js",
   "jsnext:main": "es6/index.js",
@@ -13,6 +13,7 @@
   "scripts": {
     "build": "nwb build",
     "clean": "nwb clean",
+    "publish": "nwb build-demo && gh-pages -d demo/dist",
     "start": "nwb serve",
     "test": "nwb test",
     "test:watch": "nwb test --server"
@@ -26,6 +27,7 @@
     "react": "15.x"
   },
   "devDependencies": {
+    "gh-pages": "^0.12.0",
     "nwb": "0.11.x",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
