@@ -1,5 +1,6 @@
 import createStore from './store'
 import filter from '../utils/filter'
+import orderBy from 'lodash/orderBy'
 
 function filterKey(data, key, value){
   console.log("filter", key, value)
@@ -17,7 +18,7 @@ function filterKey(data, key, value){
   }
 }
 
-function computeResults(data, {query, queryFields, filters}){
+function computeResults(data, {query, queryFields, filters, sortBy}){
   console.log("computeResults", filters)
   let filteredData = data
   for(var key in filters){
@@ -26,7 +27,31 @@ function computeResults(data, {query, queryFields, filters}){
   }
   filteredData = filter(filteredData, queryFields, query)
   console.log("=> ", filteredData)
+
+  if (sortBy){
+    filteredData = orderBy(filteredData, sortBy)
+  }
   return filteredData
+}
+
+function toggleFilter(filters={}, key, value){
+  let values
+  if (key in filters){
+    values = [...filters[key]]
+    const index = values.indexOf(value)
+    if(index !== -1) {
+        values.splice(index, 1);
+    } else {
+        values.push(value);
+    }
+  } else {
+    values = [value]
+  }
+
+  return {
+    ...filters,
+    [key]: values
+  }
 }
 
 export default class SearchManager {
@@ -51,6 +76,10 @@ export default class SearchManager {
     return this.store.getState().query
   }
 
+  getSortBy(){
+    return this.store.getState().sortBy
+  }
+
   setQuery(query, queryFields){
     console.log("query", query, queryFields)
     const state = this.store.getState()
@@ -60,39 +89,37 @@ export default class SearchManager {
       ...state,
       query, queryFields,
       results: computeResults(state.data, {
-        query, queryFields, filters
+        query, queryFields, filters, sortBy: state.sortBy
       })
+    })
+  }
+
+  sortBy(value){
+    console.log("sortBy", value)
+    const state = this.store.getState()
+    const newState = {
+      ...state,
+      sortBy: value
+    }
+
+    this.store.setState({
+      ...newState,
+      results: computeResults(state.data, newState)
     })
   }
 
   refine(field, value){
     console.log("refine", field, value)
     const state = this.store.getState()
-    let filters = state.filters || {}
-    let values
-    if (field in filters){
-      values = [...filters[field]]
-      const index = values.indexOf(value)
-      if(index !== -1) {
-          values.splice(index, 1);
-      } else {
-          values.push(value);
-      }
-    } else {
-      values = [value]
-    }
-    console.log("new filter values", values)
-    filters = {
-      ...filters,
-      [field]: values
-    }
+    const filters = toggleFilter(state.filters, field, value)
     this.store.setState({
       ...state,
       filters,
       results: computeResults(state.data, {
         query: state.query, 
         queryFields: state.queryFields, 
-        filters
+        filters,
+        sortBy: state.sortBy,
       })
     })
   }

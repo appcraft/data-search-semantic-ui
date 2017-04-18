@@ -6,20 +6,21 @@ import 'semantic-ui-css/semantic.css'
 import { Container, Table, Menu } from 'semantic-ui-react'
 
 import { 
-  RefinementListDropdown, 
-  RefinementListFilter,
+  RefinementListDropdown, RefinementListFilter,
   ResultCount,
   ResultTable,
   Searchbox,
+  SortByMenu, SortByText,
 } from '../../src/components'
 
 import SearchManager from '../../src/core/SearchManager'
+
 
 import data from '../../mock/person_100.json'
 
 const ImageCell = ({item, column}) => (
   <Table.Cell style={{padding: 0, height: 50, width: 50}}>
-    <img src={item[column.key]} style={{maxHeight: 50, display: 'block'}}/>
+    <img src={item[column.key]} style={{maxHeight: 50, display: 'block', margin: 'auto'}}/>
   </Table.Cell>
 )
 
@@ -32,6 +33,12 @@ const columns = [
   {name: 'Gender', key: 'gender'},
   {name: 'Country', key: 'country'},
   {name: 'City', key: 'city'},
+]
+
+const sortItems = [
+  {value: 'id', label: 'Id'},
+  {value: 'last_name', label: 'Last Name'},
+  {value: 'first_name', label: 'First Name'},
 ]
 
 class Search extends Component {
@@ -52,9 +59,14 @@ class Search extends Component {
     return (
       <div>
         <Container fluid style={{padding: '56px 8px 16px 224px'}}>
-          <ResultTable columns={columns} />
+          <ResultTable columns={columns} celled padded compact />
         </Container>
         <Menu vertical fixed="left" style={{paddingTop: 50}}>
+          <SortByMenu
+            title="Sort By"
+            items={sortItems}
+            defaultValue="id"
+          />
           <RefinementListFilter field="gender" title="Gender" />
           <RefinementListFilter field="country" title="Country" />
           <RefinementListDropdown field="company" title="Company" />
@@ -69,13 +81,18 @@ class Search extends Component {
             <ResultCount />
           </Menu.Item>
           <Menu.Menu position='right'>
-            <RefinementListDropdown field="job" title="Job" />
+            <SortByText
+              title="Sort By"
+              items={sortItems}
+              defaultValue="id"
+            />
           </Menu.Menu>
         </Menu>
       </div>        
     )
   }
 }
+
 
 Search.childContextTypes = {
   searchManager: PropTypes.object.isRequired,

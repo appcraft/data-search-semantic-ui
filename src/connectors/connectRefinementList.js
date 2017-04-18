@@ -10,14 +10,14 @@ export default function connectRefinementList(ComponentToWrap) {
       const refinedValues = searchManager.getFilter(field)
       const values = getKeyValues(results, field).map(item => ({
         ...item,
-        isRefined: refinedValues.indexOf(item.value) != -1
+        active: refinedValues.indexOf(item.value) != -1
       }))
-      const items = orderBy(values, 'count', 'desc')
+      const items = orderBy(values, ['count', 'label'], ['desc', 'asc'])
 
       return {
         ...otherProps,
         items,
-        refine(value) {
+        apply(value) {
           searchManager.refine(field, value)
         }
       }

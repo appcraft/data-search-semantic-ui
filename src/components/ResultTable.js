@@ -20,7 +20,7 @@ class Row extends PureComponent {
   }
 }
 
-const ResultTable = connectResults(({results, columns}) => {
+const ResultTable = connectResults(({results, columns, ...props}) => {
   if (!columns){
     if (results.length == 0) return null
     
@@ -28,7 +28,7 @@ const ResultTable = connectResults(({results, columns}) => {
     columns = Object.keys(results[0]).map(key => ({key, name: key}))
   }
   return (
-    <Table celled padded compact>
+    <Table {...props}>
       <Table.Header>
         <Table.Row>
           {columns.map(col => <Table.HeaderCell key={col.key} singleLine>{col.name}</Table.HeaderCell>)}

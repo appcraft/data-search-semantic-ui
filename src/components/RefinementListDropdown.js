@@ -23,11 +23,11 @@ class RefinementListDropdown extends PureComponent {
 
   handleItemClick(e, { name }){
     e.stopPropagation()
-    this.props.refine(name)
+    this.props.apply(name)
   }
   
   render(){
-    const { items, refine, title, maxSize=5 } = this.props
+    const { items, title, maxSize=5 } = this.props
     const { search } = this.state
     const itemsToDisplay = filter(items, ["label"], search).slice(0,maxSize)
 
