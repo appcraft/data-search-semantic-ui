@@ -27,10 +27,11 @@ class RefinementListDropdown extends PureComponent {
   }
   
   render(){
-    const { items, title, maxSize=5 } = this.props
+    const { items, title } = this.props
     const { search } = this.state
-    const itemsToDisplay = filter(items, ["label"], search).slice(0,maxSize)
+    const itemsToDisplay = filter(items, ["label"], search)//.slice(0,maxSize)
 
+    const label = itemsToDisplay.length === items.length ? "All values" : `${itemsToDisplay.length} of ${items.length} values`
     return (
       <Dropdown text={title} 
                 item
@@ -43,13 +44,12 @@ class RefinementListDropdown extends PureComponent {
                  value={search}
                  onClick={e => e.stopPropagation()}
                  onChange={this.handleSearchChange} />
-          <Dropdown.Divider />
-          <Header>{itemsToDisplay.length} of {items.length} values</Header>
-          {itemsToDisplay.map(({value, label, count, isRefined}) => (
-            <Dropdown.Item key={value} name={value} onClick={this.handleItemClick} active={isRefined}>
-              {label} ({count})
-            </Dropdown.Item>
-          ))}
+          <Header>{label}</Header>
+          <Dropdown.Menu scrolling>
+            {itemsToDisplay.map(({value, label, count, active}) => (
+              <Dropdown.Item key={value} name={value} onClick={this.handleItemClick} active={active} text={label} description={count} />
+            ))}
+          </Dropdown.Menu>
         </Dropdown.Menu>
       </Dropdown>
     )
